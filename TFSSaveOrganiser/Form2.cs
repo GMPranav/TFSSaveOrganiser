@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Net;
 using System.Text;
 using System.Windows.Forms;
 
@@ -87,6 +88,94 @@ namespace TFSSaveOrganiser
                 button3.Enabled = false;
             }
         }
-        
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            button4.Enabled = false;
+            progressBar1.Visible = true;
+
+            int bytesProcessed = 0;
+            string downloadLink = "https://github.com/GMPranav/TFSSaveOrganiser/raw/master/Any%25_Saves.zip";
+            System.IO.Stream remoteStream = null;
+            System.IO.Stream localStream = null;
+            WebResponse response = null;
+            string filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+            filePath = System.IO.Path.Combine(filePath, "Any%_Saves.zip");
+            string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), @"TFSSaveOrganiser\Any%_Saves");
+            
+            if (!System.IO.Directory.Exists(folderPath))
+            {
+                DialogResult dialogResult = MessageBox.Show("Do you want to download the community profile (70MB) ?", "Confirm Download", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    try
+                    {
+                        WebRequest request = WebRequest.Create(downloadLink);
+                        if (request != null)
+                        {
+                            double totalBytesToRecieve = 0;
+                            var sizeWebRequest = HttpWebRequest.Create(new Uri(downloadLink));
+                            sizeWebRequest.Method = "HEAD";
+
+                            using (var webResponse = sizeWebRequest.GetResponse())
+                            {
+                                var fileSize = webResponse.Headers.Get("Content-Length");
+                                totalBytesToRecieve = Convert.ToDouble(fileSize);
+                            }
+
+                            response = request.GetResponse();
+                            if (response != null)
+                            {
+                                remoteStream = response.GetResponseStream();
+                                localStream = System.IO.File.Create(filePath);
+
+                                byte[] buffer = new byte[1024];
+                                int bytesRead = 0;
+
+                                do
+                                {
+                                    bytesRead = remoteStream.Read(buffer, 0, buffer.Length);
+                                    localStream.Write(buffer, 0, bytesRead);
+                                    bytesProcessed += bytesRead;
+
+                                    double bytesIn = double.Parse(bytesProcessed.ToString());
+                                    double percentage = bytesIn / totalBytesToRecieve * 100;
+                                    percentage = Math.Round(percentage, 0);
+
+                                    progressBar1.Value = int.Parse(Math.Truncate(percentage).ToString());
+                                }
+                                while (bytesRead > 0);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    finally
+                    {
+                        if (response != null) response.Close();
+                        if (remoteStream != null) remoteStream.Close();
+                        if (localStream != null) localStream.Close();
+                    }
+
+                    System.IO.Compression.ZipFile.ExtractToDirectory(filePath, folderPath);
+                    System.IO.File.Delete(filePath);
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    //Do Nothing
+                }
+            }
+            else
+            {
+                MessageBox.Show("Community profile already downloaded.\nDelete or rename the existed profile named \"Any%_Saves\" if you want to download it again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            progressBar1.Visible = false;
+            button4.Enabled = true;
+            this.Enabled = false;
+            this.Enabled = true;
+        }
     }
 }
