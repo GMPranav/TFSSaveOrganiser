@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -88,6 +89,7 @@ namespace TFSSaveOrganiser
                     MessageBox.Show("Not a valid TFS save folder. Make sure to select the \"11\" folder and it contains the \"4.save\" file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            fbd.Dispose();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -101,10 +103,12 @@ namespace TFSSaveOrganiser
         {
             if(comboBox1.Text != "")
             {
+                listBox1.SelectedIndex = -1;
                 listBox1.Items.Clear();
                 string profilesPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
                 string savesPath = System.IO.Path.Combine(profilesPath, comboBox1.Text);
                 string[] saves = System.IO.Directory.GetDirectories(savesPath);
+                saves = saves.OrderBy(x => x.Length).ToArray();
                 foreach (string save in saves)
                 {
                     string sr = save.Replace(savesPath + @"\", "");
@@ -156,10 +160,12 @@ namespace TFSSaveOrganiser
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            listBox1.SelectedIndex = -1;
             listBox1.Items.Clear();
             string profilesPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
             string savesPath = System.IO.Path.Combine(profilesPath, comboBox1.Text);
             string[] saves = System.IO.Directory.GetDirectories(savesPath);
+            saves = saves.OrderBy(x => x.Length).ToArray();
             foreach (string save in saves)
             {
                 string sr = save.Replace(savesPath + @"\", "");
@@ -226,6 +232,7 @@ namespace TFSSaveOrganiser
 
         private void contextMenuStrip1_Opened(object sender, EventArgs e)
         {
+                addImageToolStripMenuItem.Enabled = (listBox1.SelectedIndex != -1);
                 renameToolStripMenuItem.Enabled = (listBox1.SelectedIndex != -1);
                 deleteToolStripMenuItem.Enabled = (listBox1.SelectedIndex != -1);
         }
@@ -248,6 +255,69 @@ namespace TFSSaveOrganiser
             else
             {
                 MessageBox.Show("Select a save to replace before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void addImageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string savename = listBox1.Text;
+            OpenFileDialog fbd = new OpenFileDialog();
+
+            fbd.InitialDirectory = System.Environment.SpecialFolder.MyComputer.ToString();
+
+            ImageCodecInfo[] codecs = ImageCodecInfo.GetImageEncoders();
+            string sep = string.Empty;
+
+            foreach (var c in codecs)
+            {
+                string codecName = c.CodecName.Substring(8).Replace("Codec", "Files").Trim();
+                fbd.Filter = String.Format("{0}{1}{2} ({3})|{3}", fbd.Filter, sep, codecName, c.FilenameExtension);
+                sep = "|";
+            }
+
+            fbd.Filter = String.Format("{0}{1}{2} ({3})|{3}", fbd.Filter, sep, "All Files", "*.*");
+
+            fbd.DefaultExt = ".png"; // Default file extension 
+
+            DialogResult dr = fbd.ShowDialog();
+
+            if (dr == DialogResult.OK)
+            {
+
+                string imgPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                imgPath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(imgPath, comboBox1.Text), savename), "image");
+                if (System.IO.File.Exists(imgPath))
+                {
+                    pictureBox1.BackgroundImage = Properties.Resources.SaveImgBackground;
+                    pictureBox1.Image.Dispose();
+                    pictureBox1.Image = null;
+                }
+                System.IO.File.Copy(fbd.FileName, imgPath, true);
+            }
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex != -1)
+            {
+                string imgPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                imgPath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(imgPath, comboBox1.Text), listBox1.Text), "image");
+                if (System.IO.File.Exists(imgPath))
+                {
+                    pictureBox1.BackgroundImage = null;
+                    pictureBox1.Image = Image.FromFile(imgPath);
+                }
+                else
+                {
+                    pictureBox1.BackgroundImage = null;
+                    pictureBox1.Image = Properties.Resources.NoSaveImg;
+                }
+            }
+            else if (pictureBox1.Image != null)
+            {
+                pictureBox1.BackgroundImage = Properties.Resources.SaveImgBackground;
+                pictureBox1.Image.Dispose();
+                pictureBox1.Image = null;
             }
         }
     }
