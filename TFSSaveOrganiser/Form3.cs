@@ -69,7 +69,7 @@ namespace TFSSaveOrganiser
                 {
                     try
                     {
-                        string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                        string folderPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                         folderPath = System.IO.Path.Combine(folderPath, textBox1.Text);
                         if (!System.IO.Directory.Exists(folderPath))
                         {
@@ -88,7 +88,7 @@ namespace TFSSaveOrganiser
                 }
                 else if (this.Text == "Edit Profile")
                 {
-                    string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                    string folderPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                     string fromPath = System.IO.Path.Combine(folderPath, profileName);
                     string toPath = System.IO.Path.Combine(folderPath, textBox1.Text);
                     if (!System.IO.Directory.Exists(toPath))
@@ -112,7 +112,7 @@ namespace TFSSaveOrganiser
                 {
                     try
                     {
-                        string toPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                        string toPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                         toPath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(toPath, profileName), textBox1.Text),"11");
                         if (!System.IO.Directory.Exists(toPath))
                         {
@@ -134,7 +134,7 @@ namespace TFSSaveOrganiser
                 }
                 else if (this.Text == "Edit Save")
                 {
-                    string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                    string folderPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                     string fromPath = System.IO.Path.Combine(System.IO.Path.Combine(folderPath, profileName),savePath);
                     string toPath = System.IO.Path.Combine(System.IO.Path.Combine(folderPath, profileName), textBox1.Text);
                     if (!System.IO.Directory.Exists(toPath))

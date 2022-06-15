@@ -104,7 +104,7 @@ namespace TFSSaveOrganiser
             {
                 listBox1.SelectedIndex = -1;
                 listBox1.Items.Clear();
-                string profilesPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                string profilesPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                 string savesPath = System.IO.Path.Combine(profilesPath, comboBox1.Text);
                 string[] saves = System.IO.Directory.GetDirectories(savesPath);
                 saves = saves.OrderBy(x => x.Length).ToArray();
@@ -116,16 +116,22 @@ namespace TFSSaveOrganiser
             }
 
             comboBox1.Items.Clear();
-            string[] profiles = System.IO.Directory.GetDirectories(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser"));
+            string[] profiles = System.IO.Directory.GetDirectories(System.IO.Path.Combine(Application.StartupPath, "Profiles"));
             foreach (string profile in profiles)
             {
-                string pr = profile.Replace(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser") + @"\", "");
+                string pr = profile.Replace(System.IO.Path.Combine(Application.StartupPath, "Profiles") + @"\", "");
                 comboBox1.Items.Add(pr);
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            string profilesPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
+
+            if (!System.IO.Directory.Exists(profilesPath)){
+                System.IO.Directory.CreateDirectory(profilesPath);
+            }
+
             toolTip1.SetToolTip(button3, "Imports the save from the game directory into the selected save organiser profile.");
             toolTip2.SetToolTip(button4, "Copies the selected save into the game directory.");
             toolTip3.SetToolTip(button5, "Replaces the selected save with the one from the game directory.");
@@ -161,7 +167,7 @@ namespace TFSSaveOrganiser
         {
             listBox1.SelectedIndex = -1;
             listBox1.Items.Clear();
-            string profilesPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+            string profilesPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
             string savesPath = System.IO.Path.Combine(profilesPath, comboBox1.Text);
             string[] saves = System.IO.Directory.GetDirectories(savesPath);
             saves = saves.OrderBy(x => x.Length).ToArray();
@@ -174,7 +180,7 @@ namespace TFSSaveOrganiser
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string profilesPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+            string profilesPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
             string savesPath = System.IO.Path.Combine(profilesPath, comboBox1.Text);
             string savePath = System.IO.Path.Combine(savesPath, listBox1.Text);
             DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the save?", "Confirm Save Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -212,7 +218,7 @@ namespace TFSSaveOrganiser
         {
             if(listBox1.Text != "")
             {
-                string savePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                string savePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                 savePath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(savePath, comboBox1.Text), listBox1.Text),"11");
                 try
                 {
@@ -240,7 +246,7 @@ namespace TFSSaveOrganiser
         {
             if (listBox1.Text != "")
             {
-                string savePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                string savePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                 savePath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(savePath, comboBox1.Text), listBox1.Text), "11");
                 try
                 {
@@ -283,7 +289,7 @@ namespace TFSSaveOrganiser
             if (dr == DialogResult.OK)
             {
 
-                string imgPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                string imgPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                 imgPath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(imgPath, comboBox1.Text), savename), "image");
                 if (System.IO.File.Exists(imgPath))
                 {
@@ -299,7 +305,7 @@ namespace TFSSaveOrganiser
         {
             if (listBox1.SelectedIndex != -1)
             {
-                string imgPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+                string imgPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                 imgPath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(imgPath, comboBox1.Text), listBox1.Text), "image");
                 if (System.IO.File.Exists(imgPath))
                 {

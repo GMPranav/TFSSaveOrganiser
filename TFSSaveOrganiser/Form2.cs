@@ -28,10 +28,10 @@ namespace TFSSaveOrganiser
         private void Form2_Enter(object sender, EventArgs e)
         {
             listBox1.Items.Clear();
-            string[] profiles = System.IO.Directory.GetDirectories(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser"));
+            string[] profiles = System.IO.Directory.GetDirectories(System.IO.Path.Combine(Application.StartupPath, "Profiles"));
             foreach (string profile in profiles)
             {
-                string pr = profile.Replace(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser")+ @"\", "");
+                string pr = profile.Replace(System.IO.Path.Combine(Application.StartupPath, "Profiles") + @"\", "");
                 listBox1.Items.Add(pr);
             }
         }
@@ -64,7 +64,7 @@ namespace TFSSaveOrganiser
 
         private void button3_Click(object sender, EventArgs e)
         {
-            string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+            string folderPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
             folderPath = System.IO.Path.Combine(folderPath, listBox1.Text);
             DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the Profile?", "Confirm Profile Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (dialogResult == DialogResult.Yes)
@@ -99,9 +99,9 @@ namespace TFSSaveOrganiser
             System.IO.Stream remoteStream = null;
             System.IO.Stream localStream = null;
             WebResponse response = null;
-            string filePath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "TFSSaveOrganiser");
+            string filePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
             filePath = System.IO.Path.Combine(filePath, "Any%_Saves.zip");
-            string folderPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), @"TFSSaveOrganiser\Any%_Saves");
+            string folderPath = System.IO.Path.Combine(Application.StartupPath, @"Profiles\Any%_Saves");
             
             if (!System.IO.Directory.Exists(folderPath))
             {
