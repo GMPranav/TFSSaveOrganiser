@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Security.Cryptography;
 
 namespace TFSSaveOrganiser
 {
@@ -45,6 +46,18 @@ namespace TFSSaveOrganiser
                 {
                     string newDestinationDir = System.IO.Path.Combine(destinationDir, subDir.Name);
                     CopyDirectory(subDir.FullName, newDestinationDir, true);
+                }
+            }
+        }
+
+        static string CalculateMD5(string filename)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = System.IO.File.OpenRead(filename))
+                {
+                    var hash = md5.ComputeHash(stream);
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
                 }
             }
         }
@@ -96,6 +109,7 @@ namespace TFSSaveOrganiser
             var form2 = new Form2();
             form2.Location = Control.MousePosition;
             form2.ShowDialog();
+            form2.Dispose();
         }
 
         private void Form1_Activated(object sender, EventArgs e)
@@ -151,6 +165,7 @@ namespace TFSSaveOrganiser
                     form3.profileName = comboBox1.Text;
                     form3.savePath = textBox1.Text;
                     form3.ShowDialog();
+                    form3.Dispose();
                 }
                 else
                 {
@@ -223,6 +238,7 @@ namespace TFSSaveOrganiser
                 try
                 {
                     CopyDirectory(savePath, textBox1.Text, true);
+                    MessageBox.Show("Save loaded successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -251,6 +267,7 @@ namespace TFSSaveOrganiser
                 try
                 {
                     CopyDirectory(textBox1.Text, savePath, true);
+                    MessageBox.Show("Save replaced successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -299,6 +316,7 @@ namespace TFSSaveOrganiser
                 }
                 System.IO.File.Copy(fbd.FileName, imgPath, true);
             }
+            fbd.Dispose();
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -323,6 +341,54 @@ namespace TFSSaveOrganiser
                 pictureBox1.BackgroundImage = Properties.Resources.SaveImgBackground;
                 pictureBox1.Image.Dispose();
                 pictureBox1.Image = null;
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            button6.Enabled = false;
+            if (button6.Text == "Freeze Save")
+            {
+                if (listBox1.Text != "")
+                {
+                    button6.Text = "Unfreeze Save";
+                    backgroundWorker1.RunWorkerAsync();
+                }
+                else
+                {
+                    MessageBox.Show("Select a save to replace before proceeding.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                button6.Text = "Freeze Save";
+                backgroundWorker1.CancelAsync();
+            } 
+            button6.Enabled = true;
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string savePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
+            comboBox1.Invoke(new MethodInvoker(delegate ()
+            {
+                savePath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(savePath, comboBox1.Text), listBox1.Text), "11");
+            }));
+            string fourHash = CalculateMD5(System.IO.Path.Combine(savePath, "4.save"));
+            string fourPath = System.IO.Path.Combine(textBox1.Text, "4.save");
+            while (button6.Text == "Unfreeze Save")
+            {
+                if (System.IO.File.Exists(fourPath))
+                {
+                    if (fourHash != CalculateMD5(fourPath))
+                    {
+                        CopyDirectory(savePath, textBox1.Text, true);
+                    }
+                }
+                else
+                {
+                    CopyDirectory(savePath, textBox1.Text, true);
+                }
             }
         }
     }
