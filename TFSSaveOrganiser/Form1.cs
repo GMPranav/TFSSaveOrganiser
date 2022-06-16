@@ -106,6 +106,7 @@ namespace TFSSaveOrganiser
 
         private void button2_Click(object sender, EventArgs e)
         {
+            listBox1.SelectedIndex = -1;
             var form2 = new Form2();
             form2.Location = Control.MousePosition;
             form2.ShowDialog();
@@ -114,10 +115,20 @@ namespace TFSSaveOrganiser
 
         private void Form1_Activated(object sender, EventArgs e)
         {
-            if(comboBox1.Text != "")
+            comboBox1.Items.Clear();
+            string[] profiles = System.IO.Directory.GetDirectories(System.IO.Path.Combine(Application.StartupPath, "Profiles"));
+            foreach (string profile in profiles)
             {
-                listBox1.SelectedIndex = -1;
-                listBox1.Items.Clear();
+                string pr = profile.Replace(System.IO.Path.Combine(Application.StartupPath, "Profiles") + @"\", "");
+                comboBox1.Items.Add(pr);
+            }
+            if(!System.IO.Directory.Exists(System.IO.Path.Combine(System.IO.Path.Combine(Application.StartupPath, "Profiles"),comboBox1.Text))){
+                comboBox1.Text = "";
+            }
+            listBox1.SelectedIndex = -1;
+            listBox1.Items.Clear();
+            if (comboBox1.Text != "")
+            {
                 string profilesPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
                 string savesPath = System.IO.Path.Combine(profilesPath, comboBox1.Text);
                 string[] saves = System.IO.Directory.GetDirectories(savesPath);
@@ -128,14 +139,6 @@ namespace TFSSaveOrganiser
                     listBox1.Items.Add(sr);
                 }
             }
-
-            comboBox1.Items.Clear();
-            string[] profiles = System.IO.Directory.GetDirectories(System.IO.Path.Combine(Application.StartupPath, "Profiles"));
-            foreach (string profile in profiles)
-            {
-                string pr = profile.Replace(System.IO.Path.Combine(Application.StartupPath, "Profiles") + @"\", "");
-                comboBox1.Items.Add(pr);
-            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -145,10 +148,6 @@ namespace TFSSaveOrganiser
             if (!System.IO.Directory.Exists(profilesPath)){
                 System.IO.Directory.CreateDirectory(profilesPath);
             }
-
-            toolTip1.SetToolTip(button3, "Imports the save from the game directory into the selected save organiser profile.");
-            toolTip2.SetToolTip(button4, "Copies the selected save into the game directory.");
-            toolTip3.SetToolTip(button5, "Replaces the selected save with the one from the game directory.");
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -182,14 +181,17 @@ namespace TFSSaveOrganiser
         {
             listBox1.SelectedIndex = -1;
             listBox1.Items.Clear();
-            string profilesPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
-            string savesPath = System.IO.Path.Combine(profilesPath, comboBox1.Text);
-            string[] saves = System.IO.Directory.GetDirectories(savesPath);
-            saves = saves.OrderBy(x => x.Length).ToArray();
-            foreach (string save in saves)
+            if (comboBox1.Text != "")
             {
-                string sr = save.Replace(savesPath + @"\", "");
-                listBox1.Items.Add(sr);
+                string profilesPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
+                string savesPath = System.IO.Path.Combine(profilesPath, comboBox1.Text);
+                string[] saves = System.IO.Directory.GetDirectories(savesPath);
+                saves = saves.OrderBy(x => x.Length).ToArray();
+                foreach (string save in saves)
+                {
+                    string sr = save.Replace(savesPath + @"\", "");
+                    listBox1.Items.Add(sr);
+                }
             }
         }
 
@@ -253,9 +255,11 @@ namespace TFSSaveOrganiser
 
         private void contextMenuStrip1_Opened(object sender, EventArgs e)
         {
-                addImageToolStripMenuItem.Enabled = (listBox1.SelectedIndex != -1);
-                renameToolStripMenuItem.Enabled = (listBox1.SelectedIndex != -1);
-                deleteToolStripMenuItem.Enabled = (listBox1.SelectedIndex != -1);
+            bool itemSelected = (listBox1.SelectedIndex != -1);
+            addImageToolStripMenuItem.Enabled = itemSelected;
+            renameToolStripMenuItem.Enabled = itemSelected;
+            deleteToolStripMenuItem.Enabled = itemSelected;
+            openInExplorerToolStripMenuItem.Enabled = itemSelected;
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -351,6 +355,7 @@ namespace TFSSaveOrganiser
             {
                 if (listBox1.Text != "")
                 {
+                    button4.Enabled = false;
                     button6.Text = "Unfreeze Save";
                     backgroundWorker1.RunWorkerAsync();
                 }
@@ -361,6 +366,7 @@ namespace TFSSaveOrganiser
             }
             else
             {
+                button4.Enabled = true;
                 button6.Text = "Freeze Save";
                 backgroundWorker1.CancelAsync();
             } 
@@ -389,6 +395,26 @@ namespace TFSSaveOrganiser
                 {
                     CopyDirectory(savePath, textBox1.Text, true);
                 }
+            }
+        }
+
+        private void openInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string savePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
+            savePath = System.IO.Path.Combine(System.IO.Path.Combine(savePath, comboBox1.Text), listBox1.Text);
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                Arguments = savePath,
+                FileName = "explorer.exe"
+            };
+
+            try
+            {
+                System.Diagnostics.Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
