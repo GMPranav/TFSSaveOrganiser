@@ -17,6 +17,8 @@ namespace TFSSaveOrganiser
     {
         string folderpath = "";
 
+        string[] keyBindOffsets = { "6B1", "6C5", "6DD", "6F1", "709", "71D", "735", "749", "78D", "7A1", "7B9", "7BD", "7CD", "7E5", "7E9", "7F9", "811", "825", "83D", "851", "869", "87D", "895", "8A9", "8C1", "8D5", "8ED", "901", "919", "92D", "945", "959", "961", "971", "985", "98D", "99F", "9B1", "9C9", "9DF", "9F5", "A09", "A21", "A35", "A4D", "A61", "A79", "A8D", "AA5", "AB9" };
+
         static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
         {
             // Get information about the source directory
@@ -239,7 +241,15 @@ namespace TFSSaveOrganiser
                 savePath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(savePath, comboBox1.Text), listBox1.Text),"11");
                 try
                 {
+                    byte[] OldOneDotSave = System.IO.File.ReadAllBytes(System.IO.Path.Combine(textBox1.Text, "1.save"));
                     CopyDirectory(savePath, textBox1.Text, true);
+                    byte[] NewOneDotSave = System.IO.File.ReadAllBytes(System.IO.Path.Combine(textBox1.Text, "1.save"));
+                    foreach (string offset in keyBindOffsets)
+                    {
+                        int decimalOffset = int.Parse(offset, System.Globalization.NumberStyles.HexNumber);
+                        NewOneDotSave[decimalOffset] = OldOneDotSave[decimalOffset];
+                    }
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(textBox1.Text, "1.save"), NewOneDotSave);
                     MessageBox.Show("Save loaded successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
