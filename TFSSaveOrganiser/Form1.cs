@@ -16,8 +16,7 @@ namespace TFSSaveOrganiser
     public partial class Form1 : Form
     {
         string folderpath = "";
-
-        string[] keyBindOffsets = { "6B1", "6C5", "6DD", "6F1", "709", "71D", "735", "749", "78D", "7A1", "7B9", "7BD", "7CD", "7E5", "7E9", "7F9", "811", "825", "83D", "851", "869", "87D", "895", "8A9", "8C1", "8D5", "8ED", "901", "919", "92D", "945", "959", "961", "971", "985", "98D", "99F", "9B1", "9C9", "9DF", "9F5", "A09", "A21", "A35", "A4D", "A61", "A79", "A8D", "AA5", "AB9" };
+        string selectedSlot = "2";
 
         static void CopyDirectory(string sourceDir, string destinationDir, bool recursive)
         {
@@ -72,9 +71,11 @@ namespace TFSSaveOrganiser
 
         private void SelectSaveFolder(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.ShowNewFolderButton = false;
-            fbd.RootFolder = Environment.SpecialFolder.ProgramFilesX86;
+            FolderBrowserDialog fbd = new FolderBrowserDialog
+            {
+                ShowNewFolderButton = false,
+                RootFolder = Environment.SpecialFolder.MyDocuments
+            };
             DialogResult dr = fbd.ShowDialog();
 
             if (dr == DialogResult.OK)
@@ -85,9 +86,9 @@ namespace TFSSaveOrganiser
             if (folderpath != "")
             {
                 bool validFolder = false;
-                foreach (string s in System.IO.Directory.GetFiles(folderpath))
+                foreach (string s in System.IO.Directory.GetFiles(folderpath, "*.*", SearchOption.AllDirectories))
                 {
-                    if (s.Contains("4.save"))
+                    if (RegularExpressions.Regex.IsMatch(s, @"SaveSlot[1-3]\\lastSavedFolder\.txt"))
                     {
                         validFolder = true;
                     }
@@ -100,7 +101,7 @@ namespace TFSSaveOrganiser
                 }
                 else
                 {
-                    MessageBox.Show("Not a valid TFS save folder. Make sure to select the \"11\" folder and it contains the \"4.save\" file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Not a valid TLC save folder. Make sure to select the root folder and that contains slot folders.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             fbd.Dispose();
@@ -233,23 +234,56 @@ namespace TFSSaveOrganiser
             form3.Dispose();
         }
 
+        private void CorrectSaveSlotNames(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                return;
+            }
+
+            string popSavePattern = @"PopSaveGameSlot[1-3]Index0\.AlkSave";
+            string progressionPattern = @"ProgressionSlot[1-3]Index0\.AlkContent";
+
+            string[] files = Directory.GetFiles(directoryPath);
+
+            foreach (string file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                if (Regex.IsMatch(fileName, popSavePattern))
+                {
+                    string newFileName = Regex.Replace(
+                        fileName,
+                        @"(?<=PopSaveGameSlot)[1-3](?=Index0\.AlkSave)",
+                        selectedSlot
+                    );
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+                    File.Move(file, newFilePath);
+                }
+                else if (Regex.IsMatch(fileName, progressionPattern))
+                {
+                    string newFileName = Regex.Replace(
+                        fileName,
+                        @"(?<=ProgressionSlot)[1-3](?=Index0\.AlkContent)",
+                        selectedSlot
+                    );
+                    string newFilePath = Path.Combine(directoryPath, newFileName);
+                    File.Move(file, newFilePath);
+                }
+            }
+        }
+
         private void LoadSave(object sender, EventArgs e)
         {
-            if(listBox1.Text != "")
+            if (listBox1.Text != "")
             {
-                string savePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
-                savePath = System.IO.Path.Combine(System.IO.Path.Combine(System.IO.Path.Combine(savePath, comboBox1.Text), listBox1.Text),"11");
+                string savePath = Path.Combine(Application.StartupPath, "Profiles", comboBox1.Text, listBox1.Text);
+                CorrectSaveSlotNames(savePath);
+                string saveSlotPath = Path.Combine(textBox1.Text, $"SaveSlot{selectedSlot}");
+                string lastSave = System.IO.File.ReadAllText(Path.Combine(saveSlotPath, "lastSavedFolder.txt"));
+                string lastSavePath = Path.Combine(saveSlotPath, $"Save_{lastSave}");
                 try
                 {
-                    byte[] OldOneDotSave = System.IO.File.ReadAllBytes(System.IO.Path.Combine(textBox1.Text, "1.save"));
                     CopyDirectory(savePath, textBox1.Text, true);
-                    byte[] NewOneDotSave = System.IO.File.ReadAllBytes(System.IO.Path.Combine(textBox1.Text, "1.save"));
-                    foreach (string offset in keyBindOffsets)
-                    {
-                        int decimalOffset = int.Parse(offset, System.Globalization.NumberStyles.HexNumber);
-                        NewOneDotSave[decimalOffset] = OldOneDotSave[decimalOffset];
-                    }
-                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(textBox1.Text, "1.save"), NewOneDotSave);
                     MessageBox.Show("Save loaded successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
