@@ -52,12 +52,12 @@ namespace TFSSaveOrganiser
             InitializeComponent();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void CloseForm(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void DoRelevantOperation(object sender, EventArgs e)
         {
             if(textBox1.Text == "")
             {

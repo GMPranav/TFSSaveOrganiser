@@ -16,7 +16,7 @@ namespace TFSSaveOrganiser
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void OpenCreateForm(object sender, EventArgs e)
         {
             var form3 = new Form3();
             form3.Text = "Create Profile";
@@ -50,7 +50,7 @@ namespace TFSSaveOrganiser
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void OpenEditForm(object sender, EventArgs e)
         {
             var form3 = new Form3();
             form3.Text = "Edit Profile";
@@ -62,7 +62,7 @@ namespace TFSSaveOrganiser
             form3.Dispose();
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void DeleteProfile(object sender, EventArgs e)
         {
             string folderPath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
             folderPath = System.IO.Path.Combine(folderPath, listBox1.Text);
@@ -89,7 +89,7 @@ namespace TFSSaveOrganiser
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void DownloadCommunityProfile(object sender, EventArgs e)
         {
             button4.Enabled = false;
             progressBar1.Visible = true;

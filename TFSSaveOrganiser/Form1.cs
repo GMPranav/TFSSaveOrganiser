@@ -70,7 +70,7 @@ namespace TFSSaveOrganiser
             textBox1.Text = TFSSaveOrganiser.Properties.Settings.Default.SavePath;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void SelectSaveFolder(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.ShowNewFolderButton = false;
@@ -106,7 +106,7 @@ namespace TFSSaveOrganiser
             fbd.Dispose();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void OpenProfileForm(object sender, EventArgs e)
         {
             listBox1.SelectedIndex = -1;
             var form2 = new Form2();
@@ -152,7 +152,7 @@ namespace TFSSaveOrganiser
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void OpenSaveForm(object sender, EventArgs e)
         {
             if(textBox1.Text != "")
             {
@@ -179,7 +179,7 @@ namespace TFSSaveOrganiser
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void HandleProfileChange(object sender, EventArgs e)
         {
             listBox1.SelectedIndex = -1;
             listBox1.Items.Clear();
@@ -233,7 +233,7 @@ namespace TFSSaveOrganiser
             form3.Dispose();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void LoadSave(object sender, EventArgs e)
         {
             if(listBox1.Text != "")
             {
@@ -272,7 +272,7 @@ namespace TFSSaveOrganiser
             openInExplorerToolStripMenuItem.Enabled = itemSelected;
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void ReplaceSave(object sender, EventArgs e)
         {
             if (listBox1.Text != "")
             {
@@ -333,7 +333,7 @@ namespace TFSSaveOrganiser
             fbd.Dispose();
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void HandleImageChange(object sender, EventArgs e)
         {
             if (listBox1.SelectedIndex != -1)
             {
@@ -358,7 +358,7 @@ namespace TFSSaveOrganiser
             }
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void FreezeSave(object sender, EventArgs e)
         {
             button6.Enabled = false;
             if (button6.Text == "Freeze Save")
@@ -383,7 +383,7 @@ namespace TFSSaveOrganiser
             button6.Enabled = true;
         }
 
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void FreezeSaveWorker(object sender, DoWorkEventArgs e)
         {
             string savePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
             comboBox1.Invoke(new MethodInvoker(delegate ()
@@ -408,7 +408,7 @@ namespace TFSSaveOrganiser
             }
         }
 
-        private void openInExplorerToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenSaveInExplorer(object sender, EventArgs e)
         {
             string savePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
             savePath = System.IO.Path.Combine(System.IO.Path.Combine(savePath, comboBox1.Text), listBox1.Text);

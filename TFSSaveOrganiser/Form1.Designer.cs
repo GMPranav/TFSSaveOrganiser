@@ -62,7 +62,7 @@ namespace TFSSaveOrganiser
             this.button1.TabIndex = 0;
             this.button1.Text = "Browse...";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.SelectSaveFolder);
             // 
             // textBox1
             // 
@@ -79,7 +79,7 @@ namespace TFSSaveOrganiser
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(300, 23);
             this.comboBox1.TabIndex = 2;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.HandleProfileChange);
             // 
             // button2
             // 
@@ -89,7 +89,7 @@ namespace TFSSaveOrganiser
             this.button2.TabIndex = 3;
             this.button2.Text = "Edit Profiles";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.OpenProfileForm);
             // 
             // label1
             // 
@@ -109,7 +109,7 @@ namespace TFSSaveOrganiser
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(146, 244);
             this.listBox1.TabIndex = 5;
-            this.listBox1.SelectedValueChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.listBox1.SelectedValueChanged += new System.EventHandler(this.HandleImageChange);
             // 
             // contextMenuStrip1
             // 
@@ -154,7 +154,7 @@ namespace TFSSaveOrganiser
             this.toolTip1.SetToolTip(this.button3, "Imports the save from the game directory into the selected save organiser profile" +
         ".");
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.OpenSaveForm);
             // 
             // button4
             // 
@@ -165,7 +165,7 @@ namespace TFSSaveOrganiser
             this.button4.Text = "Load Save";
             this.toolTip1.SetToolTip(this.button4, "Loads the selected save into the game directory.");
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.Click += new System.EventHandler(this.LoadSave);
             // 
             // button5
             // 
@@ -176,7 +176,7 @@ namespace TFSSaveOrganiser
             this.button5.Text = "Replace Save";
             this.toolTip1.SetToolTip(this.button5, "Replaces the selected save with the one from the game directory.");
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5.Click += new System.EventHandler(this.ReplaceSave);
             // 
             // button6
             // 
@@ -188,7 +188,7 @@ namespace TFSSaveOrganiser
             this.toolTip1.SetToolTip(this.button6, "Loads the selected save into the game directory and prevents the game or any othe" +
         "r program from modifying it until unfrozen.");
             this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.button6.Click += new System.EventHandler(this.FreezeSave);
             // 
             // pictureBox1
             // 
@@ -215,14 +215,14 @@ namespace TFSSaveOrganiser
             // backgroundWorker1
             // 
             this.backgroundWorker1.WorkerSupportsCancellation = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.FreezeSaveWorker);
             // 
             // openInExplorerToolStripMenuItem
             // 
             this.openInExplorerToolStripMenuItem.Name = "openInExplorerToolStripMenuItem";
             this.openInExplorerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openInExplorerToolStripMenuItem.Text = "Open in Explorer";
-            this.openInExplorerToolStripMenuItem.Click += new System.EventHandler(this.openInExplorerToolStripMenuItem_Click);
+            this.openInExplorerToolStripMenuItem.Click += new System.EventHandler(this.OpenSaveInExplorer);
             // 
             // Form1
             // 
