@@ -215,7 +215,7 @@ namespace TFSSaveOrganiser
             // backgroundWorker1
             // 
             this.backgroundWorker1.WorkerSupportsCancellation = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.FreezeSaveWorker);
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.FreezeSave);
             // 
             // openInExplorerToolStripMenuItem
             // 

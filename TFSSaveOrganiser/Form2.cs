@@ -95,17 +95,17 @@ namespace TFSSaveOrganiser
             progressBar1.Visible = true;
 
             int bytesProcessed = 0;
-            string downloadLink = "https://github.com/GMPranav/TFSSaveOrganiser/raw/master/Any%25_Saves.zip";
+            string downloadLink = "https://www.speedrun.com/static/resource/slkaa.zip";
             System.IO.Stream remoteStream = null;
             System.IO.Stream localStream = null;
             WebResponse response = null;
             string filePath = System.IO.Path.Combine(Application.StartupPath, "Profiles");
-            filePath = System.IO.Path.Combine(filePath, "Any%_Saves.zip");
-            string folderPath = System.IO.Path.Combine(Application.StartupPath, @"Profiles\Any%_Saves");
+            filePath = System.IO.Path.Combine(filePath, "AnyRestrictedSaves_30513942.zip");
+            string folderPath = System.IO.Path.Combine(Application.StartupPath, @"Profiles\Any%_Restricted");
             
             if (!System.IO.Directory.Exists(folderPath))
             {
-                DialogResult dialogResult = MessageBox.Show("Do you want to download the community profile (70MB) ?", "Confirm Download", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult dialogResult = MessageBox.Show("Do you want to download the community profile (4MB) ?", "Confirm Download", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                 if (dialogResult == DialogResult.Yes)
                 {
                     try
@@ -169,7 +169,7 @@ namespace TFSSaveOrganiser
             }
             else
             {
-                MessageBox.Show("Community profile already downloaded.\nDelete or rename the existed profile named \"Any%_Saves\" if you want to download it again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Community profile already downloaded.\nDelete or rename the existing profile named \"Any%_Restricted\" if you want to download it again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             progressBar1.Visible = false;
