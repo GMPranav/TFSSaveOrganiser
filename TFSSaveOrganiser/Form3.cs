@@ -79,9 +79,9 @@ namespace TFSSaveOrganiser
 
         private void EditSave()
         {
-            string folderPath = Path.Combine(Application.StartupPath, "Profiles");
-            string fromPath = Path.Combine(Path.Combine(folderPath, profileName), savePath);
-            string toPath = Path.Combine(Path.Combine(folderPath, profileName), textBox1.Text);
+            string folderPath = Path.Combine(Application.StartupPath, "Profiles", profileName);
+            string fromPath = Path.Combine(folderPath, savePath);
+            string toPath = Path.Combine(folderPath, textBox1.Text);
             if (!Directory.Exists(toPath))
             {
                 try
@@ -104,14 +104,10 @@ namespace TFSSaveOrganiser
         {
             try
             {
-                string toPath = Path.Combine(Application.StartupPath, "Profiles");
-                toPath = Path.Combine(Path.Combine(Path.Combine(toPath, profileName), textBox1.Text), "11");
+                string toPath = Path.Combine(Application.StartupPath, "Profiles", profileName, textBox1.Text);
                 if (!Directory.Exists(toPath))
                 {
                     CopyDirectory(savePath, toPath, true);
-                    File.Delete(Path.Combine(toPath, "1.save"));
-                    File.Delete(Path.Combine(toPath, "1.save.upload"));
-                    File.Delete(Path.Combine(Path.Combine(toPath, "uplay_backup"), "1.save"));
                     this.Close();
                 }
                 else
@@ -152,8 +148,7 @@ namespace TFSSaveOrganiser
         {
             try
             {
-                string folderPath = Path.Combine(Application.StartupPath, "Profiles");
-                folderPath = Path.Combine(folderPath, textBox1.Text);
+                string folderPath = Path.Combine(Application.StartupPath, "Profiles", textBox1.Text);
                 if (!Directory.Exists(folderPath))
                 {
                     Directory.CreateDirectory(folderPath);

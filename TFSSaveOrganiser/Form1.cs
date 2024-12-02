@@ -114,15 +114,14 @@ namespace TFSSaveOrganiser
                 string pr = profile.Replace(Path.Combine(Application.StartupPath, "Profiles") + @"\", "");
                 comboBox1.Items.Add(pr);
             }
-            if(!Directory.Exists(Path.Combine(Path.Combine(Application.StartupPath, "Profiles"),comboBox1.Text))){
+            if(!Directory.Exists(Path.Combine(Application.StartupPath, "Profiles",comboBox1.Text))){
                 comboBox1.Text = "";
             }
             listBox1.SelectedIndex = -1;
             listBox1.Items.Clear();
             if (comboBox1.Text != "")
             {
-                string profilesPath = Path.Combine(Application.StartupPath, "Profiles");
-                string savesPath = Path.Combine(profilesPath, comboBox1.Text);
+                string savesPath = Path.Combine(Application.StartupPath, "Profiles", comboBox1.Text);
                 string[] saves = Directory.GetDirectories(savesPath);
                 saves = saves.OrderBy(x => x.Length).ToArray();
                 foreach (string save in saves)
@@ -154,7 +153,7 @@ namespace TFSSaveOrganiser
                     form3.Location = Control.MousePosition;
                     form3.textBox1.Text = listBox1.Text;
                     form3.profileName = comboBox1.Text;
-                    form3.savePath = textBox1.Text;
+                    form3.savePath = GetLastSavePath();
                     form3.ShowDialog();
                     form3.Dispose();
                 }
@@ -175,8 +174,7 @@ namespace TFSSaveOrganiser
             listBox1.Items.Clear();
             if (comboBox1.Text != "")
             {
-                string profilesPath = Path.Combine(Application.StartupPath, "Profiles");
-                string savesPath = Path.Combine(profilesPath, comboBox1.Text);
+                string savesPath = Path.Combine(Application.StartupPath, "Profiles", comboBox1.Text);
                 string[] saves = Directory.GetDirectories(savesPath);
                 saves = saves.OrderBy(x => x.Length).ToArray();
                 foreach (string save in saves)
@@ -189,9 +187,7 @@ namespace TFSSaveOrganiser
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string profilesPath = Path.Combine(Application.StartupPath, "Profiles");
-            string savesPath = Path.Combine(profilesPath, comboBox1.Text);
-            string savePath = Path.Combine(savesPath, listBox1.Text);
+            string savePath = Path.Combine(Application.StartupPath, "Profiles", comboBox1.Text, listBox1.Text);
             DialogResult dialogResult = MessageBox.Show("Are you sure you want to delete the save?", "Confirm Save Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (dialogResult == DialogResult.Yes)
             {
@@ -427,8 +423,7 @@ namespace TFSSaveOrganiser
 
         private void OpenSaveInExplorer(object sender, EventArgs e)
         {
-            string savePath = Path.Combine(Application.StartupPath, "Profiles");
-            savePath = Path.Combine(Path.Combine(savePath, comboBox1.Text), listBox1.Text);
+            string savePath = Path.Combine(Application.StartupPath, "Profiles", comboBox1.Text, listBox1.Text);
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
             {
                 Arguments = savePath,
